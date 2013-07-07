@@ -1,0 +1,25 @@
+char gpsdata[100];
+int pps = 0;
+
+void setup() {
+  pinMode(13, OUTPUT); //built in led pin
+  pinMode(2, OUTPUT); //pin to send on/off signals
+  pinMode(3, INPUT); //pin to recieve pulses sent by GPS every second
+  Serial.begin(4800);
+  Serial1.begin(4800);
+}
+
+void loop() {
+  if (Serial.available() > 0) { //If a byte is sent to the Arduino
+  Serial.read();
+  digitalWrite(2, HIGH); //send a .1 second pulse to the GPS to turn it off/on.
+  delay(100);
+  digitalWrite(2, LOW); //make sure to only send one byte or the GPS will turn on and off over and over
+  }
+  if (Serial1.available() > 0) {
+    Serial1.readBytes(gpsdata, 70);
+    Serial.print(gpsdata);
+  }
+  pps = digitalRead(3);  //Turn on the LED when there's a pulse from the GPS
+  digitalWrite(13, pps);
+}
